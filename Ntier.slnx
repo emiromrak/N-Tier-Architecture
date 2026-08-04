@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="NTier.Business/NTier.Business.csproj" />
+  <Project Path="NTier.DataAccess/NTier.DataAccess.csproj" />
+  <Project Path="Ntier.Entities/NTier.Entities.csproj" />
+  <Project Path="NTier.UI/NTier.UI.csproj" Id="c361f467-0e78-4fae-b761-3061264df226" />
+</Solution>
