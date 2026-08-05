@@ -74,4 +74,16 @@ public class CategoryController : ControllerBase
         _categoryService.Update
             (new Category() { Name = dto.Name, Description = dto.Description, IsActive = dto.IsActive, ID = Guid.Parse(id) });
     }
+
+    [HttpGet("GetAllWProducts/{id}")]
+    public List<GetProductDto> GetAllWCategory([FromRoute] string id)
+    {
+        var products = new List<GetProductDto>();
+        foreach (var product in (_categoryService?.GetById(Guid.Parse(id))?.Products))
+        {
+            products.Add(new GetProductDto()
+            { Name = product.Name, UnitPrice = product.UnitPrice, UnitInStock = product.UnitInStock });
+        }
+        return products;
+    }
 }

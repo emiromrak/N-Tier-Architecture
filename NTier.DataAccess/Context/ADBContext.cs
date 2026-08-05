@@ -15,6 +15,7 @@ public class ADBContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Product>().Navigation(x => x.Category).AutoInclude();
+        modelBuilder.Entity<Category>().Navigation(x => x.Products).AutoInclude();
         base.OnModelCreating(modelBuilder);
     }
 }
