@@ -11,4 +11,10 @@ public class ADBContext : DbContext
     {
         optionsBuilder.UseSqlServer(@"Data Source = .;Initial Catalog=NTierDB;Integrated Security = true;TrustServerCertificate = true;");
     }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Product>().Navigation(x => x.Category).AutoInclude();
+        base.OnModelCreating(modelBuilder);
+    }
 }

@@ -74,5 +74,10 @@ namespace NTier.UI.Forms
         {
             Close();
         }
+
+        private void txtDescription_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

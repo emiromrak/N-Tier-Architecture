@@ -27,7 +27,7 @@ namespace NTier.Business.Services
                 throw new Exception("Aktif olan bir kategori silinemez.");
             _repository.DeleteByID(id);
         }
-
+            
         public IEnumerable<Category> GetAll()
         {
             return _repository.GetAll() ?? throw new Exception("Kategori bulunmamaktadır.");

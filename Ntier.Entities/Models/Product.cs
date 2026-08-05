@@ -11,6 +11,6 @@ public class Product : Entity
 
     //Navigation property
     public Category? Category { get; set; }
-    public Guid CategoryID { get; set; }
+    public Guid? CategoryID { get; set; }
 
 }

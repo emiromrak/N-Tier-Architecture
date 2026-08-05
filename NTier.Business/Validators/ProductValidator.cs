@@ -12,9 +12,6 @@ namespace NTier.Business.Validators
                 .MinimumLength(1).WithMessage("Ürün adı minimum 1 karakter olmalıdır.")
                 .MaximumLength(50).WithMessage("Ürün adı maximum 50 karakter olmalıdır.");
 
-            RuleFor(x => x.Category)
-                .NotNull().NotEmpty().WithMessage("Ürün kategorisi boş geçilemez.");
-
             RuleFor(x => x.UnitPrice)
                 .NotNull().WithMessage("Ürün fiyatı girilmelidir.")
                 .GreaterThanOrEqualTo(0).WithMessage("Ürün fiyatı negatif olamaz.");

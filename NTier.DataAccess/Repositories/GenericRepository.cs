@@ -39,6 +39,8 @@ namespace NTier.DataAccess.Repositories
 
         public void Update(T entity)
         {
+            entity.UpdatedDate = DateTime.UtcNow;
+            _dbSet.Update(entity);
             context?.SaveChanges();
         }
     }
