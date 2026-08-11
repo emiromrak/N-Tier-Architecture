@@ -23,14 +23,16 @@ namespace NTier.Business.Services
         public void Delete(Guid id)
         {
             var cat = _repository.GetByID(id);
-            if (cat != null && cat.IsActive)
+            if (cat is null)
+                throw new KeyNotFoundException("Kategori bulunamadı.");
+            if (cat.IsActive)
                 throw new Exception("Aktif olan bir kategori silinemez.");
             _repository.DeleteByID(id);
         }
             
         public IEnumerable<Category> GetAll()
         {
-            return _repository.GetAll() ?? throw new Exception("Kategori bulunmamaktadır.");
+            return _repository.GetAll();
         }
 
         public Category? GetById(Guid id)
@@ -40,7 +42,7 @@ namespace NTier.Business.Services
 
         public bool IfEntityExists(Category entity)
         {
-            return _repository.IfEntityExists(c => c.Name == entity.Name);
+            return _repository.IfEntityExists(c => c.Name == entity.Name && c.ID != entity.ID);
         }
 
         public void Update(Category entity)
@@ -48,8 +50,13 @@ namespace NTier.Business.Services
             ValidationResult result = new CategoryValidator().Validate(entity);
             if (!result.IsValid)
                 throw new Exception(string.Join("\n", result.Errors));
-            if (entity != null)
-                _repository.Update(entity);
+            if (_repository.GetByID(entity.ID) is null)
+                throw new KeyNotFoundException("Kategori bulunamadı.");
+
+            if (IfEntityExists(entity))
+                throw new Exception("Bu kategori daha önce kayıt edilmiştir.");
+
+            _repository.Update(entity);
         }
     }
 }

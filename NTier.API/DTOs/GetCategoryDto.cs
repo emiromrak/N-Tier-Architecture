@@ -2,10 +2,12 @@
 {
     public class GetCategoryDto
     {
-        public string? Name { get; set; }
-        public string? Description { get; set; }
+        public Guid ID { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public bool IsActive { get; set; }
         public DateTime CreatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
 
     }
 }

@@ -1,89 +1,84 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using NTier.API.DTOs;
 using NTier.Business.Services;
-using NTier.DataAccess.Context;
-using NTier.DataAccess.Repositories;
 using NTier.Entities.Models;
 
 namespace NTier.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class CategoryController : ControllerBase
+public class CategoryController(CategoryService categoryService) : ControllerBase
 {
-    private readonly ADBContext _context;
-    private readonly CategoryService _categoryService;
-
-    public CategoryController()
-    {
-        _context = new ADBContext();
-        var categoryRepo = new CategoryRepository(_context);
-        _categoryService = new CategoryService(categoryRepo);
-
-    }
-    //[HttpGet]
-    //public List<Category> GetAll()
-    //{
-    //    return _categoryService.GetAll().ToList();
-    //}
-
-    //[HttpPost("{name}/{desc}/{isActive}")]
-    //public void Create([FromRoute] string name, [FromRoute] string desc, [FromRoute] bool isActive)
-    //{
-    //    var category = new Category() { Name = name, Description = desc, IsActive = isActive };
-    //    _categoryService.Create(category);
-    //}
+    private readonly CategoryService _categoryService = categoryService;
 
     [HttpGet]
-    public List<GetCategoryDto> GetAll()
+    public ActionResult<IEnumerable<GetCategoryDto>> GetAll()
     {
-        var categories = new List<GetCategoryDto>();
-        foreach (var category in _categoryService.GetAll())
-        {
-            categories.Add(new GetCategoryDto() { Name = category.Name, Description = category.Description, IsActive = category.IsActive, CreatedDate = category.CreatedDate });
-        }
-
-        return categories;
+        return Ok(_categoryService.GetAll().Select(MapCategory));
     }
 
+    [HttpGet("{id:guid}")]
+    public ActionResult<GetCategoryDto> GetById(Guid id)
+    {
+        var category = _categoryService.GetById(id);
+        return category is null ? NotFound() : Ok(MapCategory(category));
+    }
 
     [HttpPost]
-    public void Create([FromBody] CreateCategoryDto dto)
+    public ActionResult<GetCategoryDto> Create(CreateCategoryDto dto)
     {
-        var category = new Category() { Name = dto.Name, Description = dto.Description, IsActive = dto.IsActive };
-        _categoryService.Create(category);
-    }
-
-    [HttpGet("{ID}")]
-    public GetCategoryDto GetByID([FromRoute] string ID)
-    {
-        var category = _categoryService.GetById(Guid.Parse(ID));
-        return
-            new GetCategoryDto() { Name=category.Name,Description=category.Description,IsActive=category.IsActive,CreatedDate=category.CreatedDate};
-    }
-
-    [HttpDelete("{ID}")]
-    public void Delete([FromRoute] string ID)
-    {
-        _categoryService.Delete(Guid.Parse(ID));
-    }
-
-    [HttpPut("{id}")]
-    public void Update([FromRoute] string id, [FromBody] UpdateCategoryDto dto)
-    {
-        _categoryService.Update
-            (new Category() { Name = dto.Name, Description = dto.Description, IsActive = dto.IsActive, ID = Guid.Parse(id) });
-    }
-
-    [HttpGet("GetAllWProducts/{id}")]
-    public List<GetProductDto> GetAllWCategory([FromRoute] string id)
-    {
-        var products = new List<GetProductDto>();
-        foreach (var product in (_categoryService?.GetById(Guid.Parse(id))?.Products))
+        var category = new Category
         {
-            products.Add(new GetProductDto()
-            { Name = product.Name, UnitPrice = product.UnitPrice, UnitInStock = product.UnitInStock });
-        }
-        return products;
+            Name = dto.Name,
+            Description = dto.Description,
+            IsActive = dto.IsActive
+        };
+
+        _categoryService.Create(category);
+        return CreatedAtAction(nameof(GetById), new { id = category.ID }, MapCategory(category));
     }
+
+    [HttpPut("{id:guid}")]
+    public IActionResult Update(Guid id, UpdateCategoryDto dto)
+    {
+        var category = _categoryService.GetById(id);
+        if (category is null)
+            return NotFound();
+
+        category.Name = dto.Name;
+        category.Description = dto.Description;
+        category.IsActive = dto.IsActive;
+        _categoryService.Update(category);
+        return NoContent();
+    }
+
+    [HttpDelete("{id:guid}")]
+    public IActionResult Delete(Guid id)
+    {
+        if (_categoryService.GetById(id) is null)
+            return NotFound();
+
+        _categoryService.Delete(id);
+        return NoContent();
+    }
+
+    [HttpGet("{id:guid}/products")]
+    public ActionResult<IEnumerable<GetProductDto>> GetProducts(Guid id)
+    {
+        var category = _categoryService.GetById(id);
+        if (category is null)
+            return NotFound();
+
+        return Ok(category.Products.Select(ProductController.MapProduct));
+    }
+
+    private static GetCategoryDto MapCategory(Category category) => new()
+    {
+        ID = category.ID,
+        Name = category.Name,
+        Description = category.Description,
+        IsActive = category.IsActive,
+        CreatedDate = category.CreatedDate,
+        UpdatedDate = category.UpdatedDate
+    };
 }

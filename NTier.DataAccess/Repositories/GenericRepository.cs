@@ -8,28 +8,30 @@ namespace NTier.DataAccess.Repositories
 {
     public class GenericRepository<T>(ADBContext context) : IRepository<T> where T : Entity
     {
-        private readonly ADBContext context = context;
+        private readonly ADBContext _context = context;
         private readonly DbSet<T> _dbSet = context.Set<T>();
         public void Create(T entity)
         {
             _dbSet.Add(entity);
-            context.SaveChanges();
+            _context.SaveChanges();
         }
 
         public void DeleteByID(Guid ID)
         {
-            _dbSet.Remove(_dbSet.Find(ID)??throw new Exception("Entity not found"));
-            context.SaveChanges();
+            var entity = GetByID(ID) ?? throw new KeyNotFoundException("Entity not found.");
+            entity.IsDeleted = true;
+            entity.UpdatedDate = DateTime.UtcNow;
+            _context.SaveChanges();
         }
 
         public IEnumerable<T> GetAll()
         {
-            return [.. _dbSet];
+            return _dbSet.ToList();
         }
 
         public T? GetByID(Guid ID)
         {
-            return _dbSet.Find(ID) ?? throw new Exception("Entity not found");
+            return _dbSet.SingleOrDefault(entity => entity.ID == ID);
         }
 
         public bool IfEntityExists(Expression<Func<T, bool>> filter)
@@ -41,7 +43,7 @@ namespace NTier.DataAccess.Repositories
         {
             entity.UpdatedDate = DateTime.UtcNow;
             _dbSet.Update(entity);
-            context?.SaveChanges();
+            _context.SaveChanges();
         }
     }
 }

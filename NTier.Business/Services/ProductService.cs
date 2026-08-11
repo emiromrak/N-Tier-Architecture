@@ -21,16 +21,18 @@ namespace NTier.Business.Services
 
         public void Delete(Guid id)
         {
-            var cat = _repository.GetByID(id);
-            if (cat != null && cat.IsActive)
+            var product = _repository.GetByID(id);
+            if (product is null)
+                throw new KeyNotFoundException("Ürün bulunamadı.");
+            if (product.IsActive)
                 throw new Exception("Aktif olan bir ürün silinemez.");
             _repository.DeleteByID(id);
         }
 
 
-        public IEnumerable<Product>? GetAll()
+        public IEnumerable<Product> GetAll()
         {
-            return _repository.GetAll() ?? throw new Exception("Ürün bulunmamaktadır.");
+            return _repository.GetAll();
         }
 
         public Product? GetById(Guid id)
@@ -40,7 +42,10 @@ namespace NTier.Business.Services
 
         public bool IfEntityExists(Product entity)
         {
-            return _repository.IfEntityExists(c => c.Name == entity.Name && c.CategoryID == entity.CategoryID);
+            return _repository.IfEntityExists(product =>
+                product.Name == entity.Name &&
+                product.CategoryID == entity.CategoryID &&
+                product.ID != entity.ID);
         }   
 
         public void Update(Product entity)
@@ -48,8 +53,13 @@ namespace NTier.Business.Services
             ValidationResult result = new ProductValidator().Validate(entity);
             if (!result.IsValid)
                 throw new Exception(string.Join("\n", result.Errors));
-            if (entity != null)
-                _repository.Update(entity);
+            if (_repository.GetByID(entity.ID) is null)
+                throw new KeyNotFoundException("Ürün bulunamadı.");
+
+            if (IfEntityExists(entity))
+                throw new Exception("Bu ürün daha önce kayıt edilmiştir.");
+
+            _repository.Update(entity);
         }
     }
 }
