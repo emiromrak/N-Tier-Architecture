@@ -15,6 +15,8 @@ public class ADBContext : DbContext
 
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<Customer> Customers { get; set; }
+    public DbSet<Order> Orders { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
@@ -26,9 +28,13 @@ public class ADBContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Product>().Navigation(x => x.Category).AutoInclude();
-        modelBuilder.Entity<Category>().Navigation(x => x.Products).AutoInclude();
+        modelBuilder.Entity<Order>().Navigation(x => x.Products).AutoInclude();
+        modelBuilder.Entity<Order>().Navigation(x => x.Customer).AutoInclude();
         modelBuilder.Entity<Product>().HasQueryFilter(product => !product.IsDeleted);
         modelBuilder.Entity<Category>().HasQueryFilter(category => !category.IsDeleted);
+        modelBuilder.Entity<Customer>().HasQueryFilter(customer => !customer.IsDeleted);
+        modelBuilder.Entity<Order>().HasQueryFilter(order => !order.IsDeleted);
+
         base.OnModelCreating(modelBuilder);
     }
 }

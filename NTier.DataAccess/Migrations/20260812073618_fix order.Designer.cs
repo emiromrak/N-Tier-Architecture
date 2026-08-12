@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NTier.DataAccess.Context;
 
@@ -11,9 +12,11 @@ using NTier.DataAccess.Context;
 namespace NTier.DataAccess.Migrations
 {
     [DbContext(typeof(ADBContext))]
-    partial class ADBContextModelSnapshot : ModelSnapshot
+    [Migration("20260812073618_fix order")]
+    partial class fixorder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,6 +103,10 @@ namespace NTier.DataAccess.Migrations
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
+
+                    b.PrimitiveCollection<string>("ProductIds")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("TotalAmount")
                         .HasColumnType("float");

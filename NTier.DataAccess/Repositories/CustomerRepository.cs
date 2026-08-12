@@ -2,4 +2,4 @@ using NTier.DataAccess.Context;
 using NTier.Entities.Models;
 
 namespace NTier.DataAccess.Repositories;
-public class OrderRepository(ADBContext context) : GenericRepository<Order>(context);
+public class CustomerRepository(ADBContext context) : GenericRepository<Customer>(context);
