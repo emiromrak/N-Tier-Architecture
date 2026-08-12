@@ -1,4 +1,4 @@
-﻿using NTier.DataAccess.Abstractions;
+using NTier.DataAccess.Abstractions;
 using NTier.Entities.Abstractions;
 using System.Linq.Expressions;
 using NTier.DataAccess.Context;
@@ -8,15 +8,15 @@ namespace NTier.DataAccess.Repositories
 {
     public class GenericRepository<T>(ADBContext context) : IRepository<T> where T : Entity
     {
-        private readonly ADBContext _context = context;
-        private readonly DbSet<T> _dbSet = context.Set<T>();
-        public void Create(T entity)
+        protected readonly ADBContext _context = context;
+        protected readonly DbSet<T> _dbSet = context.Set<T>();
+        public virtual void Create(T entity)
         {
             _dbSet.Add(entity);
             _context.SaveChanges();
         }
 
-        public void DeleteByID(Guid ID)
+        public virtual void DeleteByID(Guid ID)
         {
             var entity = GetByID(ID) ?? throw new KeyNotFoundException("Entity not found.");
             entity.IsDeleted = true;
@@ -24,22 +24,22 @@ namespace NTier.DataAccess.Repositories
             _context.SaveChanges();
         }
 
-        public IEnumerable<T> GetAll()
+        public virtual IEnumerable<T> GetAll()
         {
             return _dbSet.ToList();
         }
 
-        public T? GetByID(Guid ID)
+        public virtual T? GetByID(Guid ID)
         {
             return _dbSet.SingleOrDefault(entity => entity.ID == ID);
         }
 
-        public bool IfEntityExists(Expression<Func<T, bool>> filter)
+        public virtual bool IfEntityExists(Expression<Func<T, bool>> filter)
         {
-            return _dbSet.Any(filter);
+            return _dbSet.IgnoreQueryFilters().Any(filter);
         }
 
-        public void Update(T entity)
+        public virtual void Update(T entity)
         {
             entity.UpdatedDate = DateTime.UtcNow;
             _dbSet.Update(entity);

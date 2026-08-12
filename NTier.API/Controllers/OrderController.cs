@@ -38,7 +38,8 @@ public class OrderController(OrderService orderService, ProductRepository produc
         };
 
         _orderService.Create(order);
-        return CreatedAtAction(nameof(GetById), new { id = order.ID }, MapOrder(order));
+        var createdOrder = _orderService.GetById(order.ID) ?? order;
+        return CreatedAtAction(nameof(GetById), new { id = order.ID }, MapOrder(createdOrder));
     }
 
     [HttpPut("{id:guid}")]
@@ -68,9 +69,17 @@ public class OrderController(OrderService orderService, ProductRepository produc
 
     private static GetOrderDto MapOrder(Order order) => new()
     {
+        ID = order.ID,
         OrderDate = order.OrderDate,
         TotalAmount = order.TotalAmount,
         CustomerId = order.CustomerId,
-        ProductIds = order.Products.Select(p => p.ID).ToList()
+        CustomerName = order.Customer?.Name ?? string.Empty,
+        Products = order.Products?.Select(p => new GetOrderProductDto
+        {
+            ID = p.ID,
+            Name = p.Name,
+            UnitPrice = p.UnitPrice,
+            UnitInStock = p.UnitInStock
+        }).ToList() ?? []
     };
 }

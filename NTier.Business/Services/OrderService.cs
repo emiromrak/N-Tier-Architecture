@@ -22,9 +22,6 @@ namespace NTier.Business.Services
 
         public void Delete(Guid id)
         {
-            var order = _repository.GetByID(id);
-            if (order is null)
-                throw new KeyNotFoundException("Sipariş bulunamadı.");
             _repository.DeleteByID(id);
         }
             
@@ -40,7 +37,8 @@ namespace NTier.Business.Services
 
         public bool IfEntityExists(Order entity)
         {
-            return _repository.IfEntityExists(c => c.CustomerId == entity.CustomerId && c.OrderDate == entity.OrderDate && c.ID != entity.ID);
+            return _repository.IfEntityExists(
+                c => c.CustomerId == entity.CustomerId && c.OrderDate == entity.OrderDate && c.ID != entity.ID);
         }
 
         public void Update(Order entity)
@@ -48,8 +46,6 @@ namespace NTier.Business.Services
             ValidationResult result = new OrderValidator().Validate(entity);
             if (!result.IsValid)
                 throw new Exception(string.Join("\n", result.Errors));
-            if (_repository.GetByID(entity.ID) is null)
-                throw new KeyNotFoundException("Sipariş bulunamadı.");
 
             if (IfEntityExists(entity))
                 throw new Exception("Bu sipariş daha önce kayıt edilmiştir.");

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Box, Layers, ShoppingBag } from 'lucide-react';
+import { Box, Layers, ShoppingBag, ShoppingCart } from 'lucide-react';
 
 interface SidebarProps {
-  activeTab: 'categories' | 'products';
-  setActiveTab: (tab: 'categories' | 'products') => void;
+  activeTab: 'categories' | 'products' | 'orders';
+  setActiveTab: (tab: 'categories' | 'products' | 'orders') => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
@@ -44,6 +44,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
           >
             <ShoppingBag className="me-2 shrink-0" size={18} />
             <span>Ürünler</span>
+          </button>
+        </li>
+        <li className="nav-item">
+          <button
+            type="button"
+            className={`nav-link w-100 text-start d-flex align-items-center ${
+              activeTab === 'orders' ? 'active' : 'text-white'
+            }`}
+            onClick={() => setActiveTab('orders')}
+          >
+            <ShoppingCart className="me-2 shrink-0" size={18} />
+            <span>Siparişler</span>
           </button>
         </li>
       </ul>
