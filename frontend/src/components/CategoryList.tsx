@@ -45,8 +45,23 @@ export default function CategoryList() {
   }, []);
 
   useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+    let ignore = false;
+    async function startFetching() {
+      const result = await categoryService.getAll();
+      if (!ignore) {
+        if (result.error) {
+          setError(result.error);
+        } else {
+          setCategories(result.data ?? []);
+        }
+        setLoading(false);
+      }
+    }
+    startFetching();
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const openCreateModal = () => {
     setEditCategory(null);
