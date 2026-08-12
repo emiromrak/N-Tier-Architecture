@@ -18,7 +18,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
         className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
       >
         <Box className="me-2 text-primary" size={28} />
-        <span className="fs-4 font-bold tracking-wide">NTier ERP Portal</span>
+        <span className="fs-4 font-bold tracking-wide">NTier Panel</span>
       </a>
       <hr className="border-secondary my-3" />
       <ul className="nav nav-pills flex-column mb-auto gap-1">

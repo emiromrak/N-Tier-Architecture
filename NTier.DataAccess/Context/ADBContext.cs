@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using NTier.Entities.Models;
 
 namespace NTier.DataAccess.Context;
@@ -28,6 +28,7 @@ public class ADBContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Product>().Navigation(x => x.Category).AutoInclude();
+        modelBuilder.Entity<Category>().Navigation(x => x.Products).AutoInclude();
         modelBuilder.Entity<Order>().Navigation(x => x.Products).AutoInclude();
         modelBuilder.Entity<Order>().Navigation(x => x.Customer).AutoInclude();
         modelBuilder.Entity<Product>().HasQueryFilter(product => !product.IsDeleted);

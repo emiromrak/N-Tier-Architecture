@@ -1,15 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using NTier.API.DTOs;
 using NTier.Business.Services;
+using NTier.DataAccess.Repositories;
 using NTier.Entities.Models;
 
 namespace NTier.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class CategoryController(CategoryService categoryService) : ControllerBase
+public class CategoryController(CategoryService categoryService, ProductRepository productRepository) : ControllerBase
 {
     private readonly CategoryService _categoryService = categoryService;
+    private readonly ProductRepository _productRepository = productRepository;
 
     [HttpGet]
     public ActionResult<IEnumerable<GetCategoryDto>> GetAll()
@@ -65,11 +67,11 @@ public class CategoryController(CategoryService categoryService) : ControllerBas
     [HttpGet("{id:guid}/products")]
     public ActionResult<IEnumerable<GetProductDto>> GetProducts(Guid id)
     {
-        var category = _categoryService.GetById(id);
-        if (category is null)
+        if (_categoryService.GetById(id) is null)
             return NotFound();
 
-        return Ok(category.Products.Select(ProductController.MapProduct));
+        var products = _productRepository.GetAll().Where(p => p.CategoryID == id);
+        return Ok(products.Select(ProductController.MapProduct));
     }
 
     private static GetCategoryDto MapCategory(Category category) => new()
