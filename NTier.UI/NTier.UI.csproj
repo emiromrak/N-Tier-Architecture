@@ -27,7 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\NTier.Business\NTier.Business.csproj" />
     <ProjectReference Include="..\NTier.DataAccess\NTier.DataAccess.csproj" />
-    <ProjectReference Include="..\Ntier.Entities\NTier.Entities.csproj" />
+    <ProjectReference Include="..\NTier.Entities\NTier.Entities.csproj" />
   </ItemGroup>
 
 </Project>

@@ -23,7 +23,7 @@ function App() {
       description: 'Sistemdeki tüm siparişleri ve sipariş edilen ürünleri görüntüleyin.',
     },
   };
-
+  
   return (
     <div className="d-flex min-vh-100 bg-dark text-white">
       {/* Sidebar Component */}

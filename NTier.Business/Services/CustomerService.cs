@@ -13,7 +13,7 @@ namespace NTier.Business.Services
         public void Create(Customer entity)
         {
             if (IfEntityExists(entity))
-                throw new Exception("Bu kategori daha önce kayıt edilmiştir.");
+                throw new Exception("Bu müşteri daha önce kayıt edilmiştir.");
             ValidationResult result = new CustomerValidator().Validate(entity);
             if (!result.IsValid)
                 throw new Exception(string.Join("\n", result.Errors));
